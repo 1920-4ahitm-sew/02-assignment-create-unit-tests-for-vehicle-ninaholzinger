@@ -27,12 +27,12 @@ public class VehicleEndpointIT {
     public void fetchVehicle(){
      Response response = this.target.request(MediaType.TEXT_PLAIN).get();
      assertThat(response.getStatus(),is(200));
-     //String payload = response.readEntity(String.class);
-     JsonArray payload = response.readEntity(JsonArray.class);
+     String payload = response.readEntity(String.class);
+     //JsonArray payload = response.readEntity(JsonArray.class);
      System.out.println("payload = " + payload);
-     JsonObject vehicle = payload.getJsonObject(0);
-     assertThat(vehicle.getString("brand"),is("Opel 42"));
-     assertThat(vehicle.getString("type"),is(("Commodore")));
+     //JsonObject vehicle = payload.getJsonObject(0);
+     //assertThat(vehicle.getString("brand"),is("Opel 42"));
+     //assertThat(vehicle.getString("type"),is(("Commodore")));
      //fail();
  }
 }
