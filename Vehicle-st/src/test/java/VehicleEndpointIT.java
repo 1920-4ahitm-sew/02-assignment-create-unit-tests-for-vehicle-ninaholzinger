@@ -9,7 +9,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -27,6 +29,7 @@ public class VehicleEndpointIT {
     public void fetchVehicle(){
      Response response = this.target.request(MediaType.TEXT_PLAIN).get();
      assertThat(response.getStatus(),is(200));
+
      String payload = response.readEntity(String.class);
      //JsonArray payload = response.readEntity(JsonArray.class);
      System.out.println("payload = " + payload);
@@ -34,5 +37,25 @@ public class VehicleEndpointIT {
      //assertThat(vehicle.getString("brand"),is("Opel 42"));
      //assertThat(vehicle.getString("type"),is(("Commodore")));
      //fail();
+ }
+
+ @Test
+ public void crud(){
+  Response response = this.target.request(MediaType.APPLICATION_JSON).get();
+  assertThat(response.getStatus(),is(200));
+  JsonArray payload = response.readEntity(JsonArray.class);
+  System.out.println("payload = " + payload);
+  assertThat(payload,not(empty()));
+
+  JsonObject vehicle = payload.getJsonObject(0);
+  assertThat(vehicle.getString("brand"),is("Opel 42"));
+  assertThat(vehicle.getString("type"),is(("Commodore")));
+
+  JsonObject dedicatedVehicle = this.target.path("43").request(MediaType.APPLICATION_JSON).get(JsonObject.class);
+  assertThat(dedicatedVehicle.getString("brand"),containsString("43"));
+  assertThat(dedicatedVehicle.getString("brand"),equalTo("Opel 43"));
+
+  Response deleteResponse = this.target.path("42").request(MediaType.APPLICATION_JSON).delete();
+  assertThat(deleteResponse.getStatus(),is(204));
  }
 }
